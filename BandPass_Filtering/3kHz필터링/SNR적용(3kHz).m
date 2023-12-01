@@ -1,8 +1,15 @@
+#-------------------------------------코드설명-------------------------------------
+
+% 1. 해당 코드는 Original-signal의 SNR 값을 확인할 수 있습니다.
+% 2. 3kHz에 대해 BandPassFiltering한 signal의 SNR 값을 확인할 수 있습니다.
+
+#---------------------------------------------------------------------------------
+
 clc; clear;
 pkg load signal;
 
 % 음성 파일 읽기
-[x, fs] = audioread('C:\test/Received_Signal.wav');
+[x, fs] = audioread('D:\test/Received_Signal.wav');
 
 % -----------------------------------------------------------------------------
 % Original Signal의 전체 전력 계산 (1초부터 3초까지)
@@ -25,7 +32,7 @@ original_noise_power = sum(abs(segment).^2) / length(segment);
 
 % Original Signal의 SNR 계산
 original_snr_db = 10 * log10(original_signal_power / original_noise_power);
-fprintf('Original Signal-to-Noise Ratio: %.2f dB\n', original_snr_db);
+fprintf('Original Signal-to-Noise Ratio: %f dB\n', original_snr_db);
 % -----------------------------------------------------------------------------
 
 % -----------------------------------------------------------------------------
@@ -56,15 +63,8 @@ filtered_noise_power_part = sum(abs(filtered_signal(start_index_filtered_part:en
 
 % Filtered Signal에서 0초에서 1초까지의 전력에서 Original Signal의 잡음 전력을 빼기
 power_difference = filtered_signal_power - filtered_noise_power_part;
-fprintf('필터링 후 신호전력 - 필터링 후 잡음전력: %f\n', power_difference);
 
 % Filtered Signal의 SNR 계산
-filtered_snr_db_part = 10 * log10((filtered_signal_power-filtered_noise_power_part) / filtered_noise_power_part);
-fprintf('Filtered Signal-to-Noise Ratio (0-1s): %.2f dB\n', filtered_snr_db_part);
+filtered_snr_db_part = 10 * log10((filtered_signal_power-filtered_noise_power_part) / original_noise_power);
+fprintf('Filtered Signal-to-Noise Ratio (0-1s): %f dB\n', filtered_snr_db_part);
 
-% -----------------------------------------------------------------------------
-% 필터링 된 신호를 저장할 파일 경로 및 이름 지정
-filtered_signal_file = 'c:\test/Filtered_Signal.wav';
-% 필터링 된 신호를 오디오 파일로 저장
-audiowrite(filtered_signal_file, filtered_signal, fs);
-% -----------------------------------------------------------------------------

@@ -1,16 +1,22 @@
+#-------------------------------------코드설명-------------------------------------
+
+% 1. 해당 코드는 Original-Signal의 시간 도메인과 주파수 영역의 스펙트럼, 스펙트로그램을 확인할 수 있습니다.
+% 2. 3개의 주파수 성분 중 3kHz 필터링한 시간 도메인과 주파수 영역의 스펙트럼, 스펙트로그램을 확인할 수 있습니다.
+
+#---------------------------------------------------------------------------------
+
 clc; clear;
 pkg load signal;
 
 # -----------------------------------------------------------------------------
 % 음성 파일 읽기
-[x, fs] = audioread('C:\test/Received_Signal.wav');
+[x, fs] = audioread('D:\test/Received_Signal.wav');
 
 % 주파수 대역 설정
 frequencies = (0:length(x)-1)*(fs/length(x)); % 주파수 계산
 % FFT를 통해 주파수 영역으로 변환
 X = fft(x);
 
-# 1. 주파수 3kHz 제외 모두 제거하기
 % 주파수가 3 kHz 주변에 해당하는 부분을 선택
 target_frequency = 3000;
 tolerance = 50; % 주파수의 허용 오차 범위
@@ -106,13 +112,5 @@ colorbar; % 컬러바 추가
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-% 필터링 전 기존 사운드 재생
-disp("Before Filtering sound");
-sound(x,fs);
-pause(length(x)/fs);
-% 1. (3kHz)필터링 후 사운드 재생
-disp("After Filtering Sound (3kHz)");
-audiowrite('c:/test/testing/Filtered_Signal_3kHz.wav', filtered_signal, fs);
-sound(filtered_signal, fs);
-pause(length(filtered_signal)/fs);
-
+% 1. (3kHz BandPassFilter)사운드 저장
+audiowrite('D:/test/testing/Filtered_Signal_3kHz.wav', filtered_signal, fs);
