@@ -9,7 +9,7 @@ clc; clear;
 pkg load signal;
 
 % 음성 파일 읽기
-[x, fs] = audioread('D:\test/Received_Signal.wav');
+[x, fs] = audioread('C:\test/Received_Signal.wav');
 
 % -----------------------------------------------------------------------------
 % Original Signal의 평균 전력 계산
@@ -20,6 +20,7 @@ signal_1_to_3 = x(fs+1:3*fs); % 1초부터 3초까지
 P_sig = mean(abs(signal_1_to_3).^2)
 
 Original_SNR_dB_ = 10*log10(P_sig/noise)
+
 X = fft(x); % FFT 연산
 X_shifted = fftshift(X); % 주파수 영역 재배치
 % 주파수 스펙트럼 그리기
@@ -75,3 +76,4 @@ filtered_P_sig = mean(abs(filtered_1_to_3).^2) - filtered_noise;
 SNR_3k = filtered_P_sig/noise
 SNR_dB_3k = 10*log10(SNR_3k)
 
+P_sig/noise

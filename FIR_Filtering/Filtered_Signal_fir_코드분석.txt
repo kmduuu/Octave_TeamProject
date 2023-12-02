@@ -1,0 +1,17 @@
+주파수 필터링을 수행하고 Spectrogram으로 결과를 시각화하는 코드 입니다.
+
+1. 패키지 및 음성 파일 로드
+    - Signal 패키지를 로드하고, 특정 경로에 있는 음성 파일을 읽어들입니다.
+
+2. 주파수 필터링
+    - `fir1` 함수를 사용하여 Bandpass, Lowpass, Highpass 필터를 설계하고 음성 데이터에 적용합니다.
+    - Bandpass 필터는 특정 주파수 대역을 추출하기 위해, Lowpass 및 Highpass 필터는 주파수 대역을 차단하기 위해 사용됩니다.
+
+3. Spectrogram 생성
+    - `specgram` 함수를 사용하여 필터링된 신호에 대한 Spectrogram을 생성합니다.
+    - Bandpass, Lowpass, Highpass 필터링된 신호에 대한 Spectrogram이 각각 생성됩니다.
+
+4. 시각화
+    - `subplot`과 `imagesc` 함수를 사용하여 Spectrogram을 시각화하고 각각의 제목, 축 라벨 및 컬러바를 설정합니다.
+
+이 코드는 주파수 필터링을 수행하고, 이후 각 필터링된 신호에 대한 Spectrogram을 비교하기 위한 것 입니다. 주어진 주파수 대역을 얼마나 잘 추출하거나 차단하는지를 시각적으로 확인하는 용도로 사용 합니다.

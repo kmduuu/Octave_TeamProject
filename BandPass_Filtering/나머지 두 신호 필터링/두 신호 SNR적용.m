@@ -25,14 +25,14 @@ ylabel('세기');
 
 % BandPass FIR 필터 적용
 
-passband1 = [2000]/(fs/2); %주파수 범위 정의
+passband1 = [1000 2000]/(fs/2); %주파수 범위 정의
 filter_order = 1000; % 필터 차수 설정
-bandpass_filter1 = fir1(filter_order, passband1, 'low');
+bandpass_filter1 = fir1(filter_order, passband1, 'bandpass');
 % Original Signal에 BandPass FIR 필터 적용
 filtered_signal1 = filter(bandpass_filter1, 1, x);
 
-passband2 = [3400]/(fs/2); %주파수 범위 정의
-bandpass_filter2 = fir1(filter_order, passband2, 'high');
+passband2 = [3400 5000]/(fs/2); %주파수 범위 정의
+bandpass_filter2 = fir1(filter_order, passband2, 'bandpass');
 % Original Signal에 BandPass FIR 필터 적용 수정
 filtered_signal2 = filter(bandpass_filter2, 1, x);
 
