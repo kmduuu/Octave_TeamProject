@@ -10,7 +10,7 @@ clc; clear;
 pkg load signal;
 
 % WAV 파일 읽기
-[x, fs] = audioread('D:\test/Received_Signal.wav');
+[x, fs] = audioread('C:\test/Received_Signal.wav');
 
 % Set the first second of the signal to zeros
 x(1:fs) = 0;
@@ -72,7 +72,7 @@ ylabel('Frequency [Hz]');
 colorbar;
 
 % 필터링된 신호를 WAV 파일로 저장
-audiowrite('D:/test/lastFilter_Upward.wav', real(filtered_signal_upward), fs);
-audiowrite('D:/test/lastFilter_Downward.wav', real(filtered_signal_downward), fs);
+audiowrite('C:/test/lastFilter_Upward.wav', real(filtered_signal_upward), fs);
+audiowrite('C:/test/lastFilter_Downward.wav', real(filtered_signal_downward), fs);
 
 

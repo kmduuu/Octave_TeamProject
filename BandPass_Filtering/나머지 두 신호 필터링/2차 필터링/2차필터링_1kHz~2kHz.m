@@ -2,7 +2,7 @@ clc; clear;
 pkg load signal;
 
 % 음성 파일 읽기
-[x, fs] = audioread('c:/test/lastFilter_Upward.wav');
+[x, fs] = audioread('C:/test/lastFilter_Upward.wav');
 
 % 타겟 시간 구간 설정 (0초에서 3초)
 start_time = 0;
@@ -48,10 +48,10 @@ for i = 1:num_steps
 end
 
 % 결과 음성 파일로 저장
-output_file = 'c:/test/testing/Extracted_Frequency_Signal_1000to2000.wav';
+output_file = 'C:/test/testing/Extracted_Frequency_Signal_1000to2000.wav';
 audiowrite(output_file, new_signal, fs);
 % 음성 파일 읽기
-[x, fs] = audioread('c:/test/testing/Extracted_Frequency_Signal_1000to2000.wav');
+[x, fs] = audioread('C:/test/testing/lastFilter_Upward.wav');
 
 % STFT를 사용하여 시간에 따른 주파수 성분 분석
 window_size = 1024;
