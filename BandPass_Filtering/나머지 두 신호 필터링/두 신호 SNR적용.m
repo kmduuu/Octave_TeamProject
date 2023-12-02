@@ -1,67 +1,78 @@
-#-------------------------------------코드설명-------------------------------------
-
-% 1. 해당 코드는 1kHz => 2kHz로 상승하는 주파수 성분을 분리후 계산한 SNR 값을 확인할 수 있습니다.
-% 2. 5kHz => 3kHz로 하강하는 주파수 성분을 분리후 계산한 SNR 값을 확인할 수 있습니다.
-
-#---------------------------------------------------------------------------------
-
 clc; clear;
 pkg load signal;
 
-% WAV 파일 읽기
+% 음성 파일 읽기
 [x, fs] = audioread('D:\test/Received_Signal.wav');
 
-% Set the first second of the signal to zeros
-x(1:fs) = 0;
+% Original Signal의 평균 전력 계산
+signal_0_to_1 = x(1:1*fs); % 0초부터 1초까지
+noise = mean(abs(signal_0_to_1).^2);
+signal_1_to_3 = x(fs+1:3*fs); % 1초부터 3초까지
+P_sig = mean(abs(signal_1_to_3).^2);
 
-% FFT를 통해 주파수 영역으로 변환
-X = fft(x);
-N = length(X);
-frequencies = (0:N-1)*(fs/N); % 주파수 계산
+Original_SNR_dB_ = 10*log10(P_sig/noise)
 
-lowcut_upward = 930;
-highcut_upward = 2070;
-filter_range_upward = (frequencies > lowcut_upward & frequencies < highcut_upward) | ...
-                      (frequencies > (fs - highcut_upward) & frequencies < (fs - lowcut_upward));
+X = fft(x); % FFT 연산
+X_shifted = fftshift(X); % 주파수 영역 재배치
+% 주파수 스펙트럼 그리기
+frequencies = (-fs/2:fs/length(X_shifted):(fs/2-fs/length(X_shifted))); % 주파수 벡터 생성
 
-lowcut_downward = 3350;
-highcut_downward = 5000;
-filter_range_downward = (frequencies > lowcut_downward & frequencies < highcut_downward) | ...
-                        (frequencies > (fs - highcut_downward) & frequencies < (fs - lowcut_downward));
+figure;
+plot(frequencies, abs(X_shifted));
+title('주파수 스펙트럼');
+xlabel('주파수 (Hz)');
+ylabel('세기');
 
-X_filtered_upward = X;
-X_filtered_upward(~filter_range_upward) = 0;
-filtered_signal_upward = ifft(X_filtered_upward);
+% BandPass FIR 필터 적용
 
-X_filtered_downward = X;
-X_filtered_downward(~filter_range_downward) = 0;
-filtered_signal_downward = ifft(X_filtered_downward);
+passband1 = [2000]/(fs/2); %주파수 범위 정의
+filter_order = 1000; % 필터 차수 설정
+bandpass_filter1 = fir1(filter_order, passband1, 'low');
+% Original Signal에 BandPass FIR 필터 적용
+filtered_signal1 = filter(bandpass_filter1, 1, x);
 
-% Filtered Signal의 전체 전력 계산 (1초부터 3초까지)
-start_time_filtered = 1;
-end_time_filtered = 3;
-start_index_filtered_upward = floor(start_time_filtered * fs) + 1;
-end_index_filtered_upward = floor(end_time_filtered * fs);
-filtered_signal_power_upward = sum(abs(filtered_signal_upward(start_index_filtered_upward:end_index_filtered_upward)).^2) / length(filtered_signal_upward(start_index_filtered_upward:end_index_filtered_upward));
+passband2 = [3400]/(fs/2); %주파수 범위 정의
+bandpass_filter2 = fir1(filter_order, passband2, 'high');
+% Original Signal에 BandPass FIR 필터 적용 수정
+filtered_signal2 = filter(bandpass_filter2, 1, x);
 
-start_index_filtered_downward = floor(start_time_filtered * fs) + 1;
-end_index_filtered_downward = floor(end_time_filtered * fs);
-filtered_signal_power_downward = sum(abs(filtered_signal_downward(start_index_filtered_downward:end_index_filtered_downward)).^2) / length(filtered_signal_downward(start_index_filtered_downward:end_index_filtered_downward));
+% filtered_signal Spectrogram 생성
+[S_filtered1, freq_filtered1, t_f1] = specgram(filtered_signal1, 1024, fs, hann(1024), 512);
+[S_filtered2, freq_filtered2, t_f2] = specgram(filtered_signal2, 1024, fs, hann(1024), 512);
 
-% Filtered Signal의 잡음 전력 계산 (0초부터 1초까지)
-start_time_filtered_part = 0;
-end_time_filtered_part = 1;
-start_index_filtered_part_upward = floor(start_time_filtered_part * fs) + 1;
-end_index_filtered_part_upward = floor(end_time_filtered_part * fs);
-filtered_noise_power_part_upward = sum(abs(filtered_signal_upward(start_index_filtered_part_upward:end_index_filtered_part_upward)).^2) / length(filtered_signal_upward(start_index_filtered_part_upward:end_index_filtered_part_upward));
+% filtered_signal Spectrogram
+figure;
+subplot(2,1,1);
+imagesc(t_f1, freq_filtered1, 20*log10(abs(S_filtered1)));
+axis xy;
+title('low Filtered Signal Spectrogram');
+xlabel('Time [sec]');
+ylabel('Frequency [Hz]');
+colorbar;
 
-start_index_filtered_part_downward = floor(start_time_filtered_part * fs) + 1;
-end_index_filtered_part_downward = floor(end_time_filtered_part * fs);
-filtered_noise_power_part_downward = sum(abs(filtered_signal_downward(start_index_filtered_part_downward:end_index_filtered_part_downward)).^2) / length(filtered_signal_downward(start_index_filtered_part_downward:end_index_filtered_part_downward));
+subplot(2,1,2);
+imagesc(t_f2, freq_filtered2, 20*log10(abs(S_filtered2)));
+axis xy;
+title('high Filtered Signal Spectrogram');
+xlabel('Time [sec]');
+ylabel('Frequency [Hz]');
+colorbar;
 
-power_difference_upward = filtered_signal_power_upward - filtered_noise_power_part_upward;
-power_difference_downward = filtered_signal_power_downward - filtered_noise_power_part_downward;
+% filtered_signal1의 평균 전력 계산
+filtered1_0_to_1 = filtered_signal1(1:1*fs);
+filtered_noise1 = mean(abs(filtered1_0_to_1).^2);
 
-% 3.5985e-05는 Original-signal의 잡음 전력 값
-fprintf('Upward Filtered Signal SNR: %f dB\n', 10 * log10(power_difference_upward / 3.5985e-05));
-fprintf('Downward Filtered Signal SNR: %f dB\n', 10 * log10(power_difference_downward / 3.5985e-05));
+filtered1_1_to_3 = filtered_signal1(fs+1:3*fs);
+filtered_P_sig1 = mean(abs(filtered1_1_to_3).^2) - filtered_noise1;
+
+
+filtered2_0_to_2 = filtered_signal2(1:1*fs);
+filtered_noise2 = mean(abs(filtered2_0_to_2).^2);
+
+filtered2_1_to_3 = filtered_signal2(fs+1:3*fs);
+filtered_P_sig2 = mean(abs(filtered2_1_to_3).^2) - filtered_noise2;
+
+SNR_high = filtered_P_sig2/noise
+SNR_dB_high = 10*log10(SNR_high)
+SNR_low = filtered_P_sig1/noise
+SNR_dB_low = 10*log10(SNR_low)
