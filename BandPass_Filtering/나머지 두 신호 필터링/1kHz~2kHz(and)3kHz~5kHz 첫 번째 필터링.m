@@ -25,7 +25,7 @@ highcut_upward = 2070;
 filter_range_upward = (frequencies > lowcut_upward & frequencies < highcut_upward) | ...
                       (frequencies > (fs - highcut_upward) & frequencies < (fs - lowcut_upward));
 
-lowcut_downward = 3350;
+lowcut_downward = 3420;
 highcut_downward = 5000;
 filter_range_downward = (frequencies > lowcut_downward & frequencies < highcut_downward) | ...
                         (frequencies > (fs - highcut_downward) & frequencies < (fs - lowcut_downward));
@@ -58,7 +58,7 @@ figure;
 subplot(2,1,1);
 imagesc(times_upward, freqs_upward, 10*log10(abs(S_upward))); % Y축 범위 자동 조절
 axis xy;
-title('Filtered Signal Spectrogram (1kHz to 3kHz)');
+title('Filtered Signal Spectrogram (1kHz to 2kHz)');
 xlabel('Time [sec]');
 ylabel('Frequency [Hz]');
 colorbar;
@@ -66,7 +66,7 @@ colorbar;
 subplot(2,1,2);
 imagesc(times_downward, freqs_downward, 10*log10(abs(S_downward))); % Y축 범위 자동 조절
 axis xy;
-title('Filtered Signal Spectrogram (3kHz to 5kHz)');
+title('Filtered Signal Spectrogram (5kHz to 3kHz)');
 xlabel('Time [sec]');
 ylabel('Frequency [Hz]');
 colorbar;

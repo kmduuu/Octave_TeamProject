@@ -2,7 +2,7 @@ clc; clear;
 pkg load signal;
 
 % 음성 파일 읽기
-[x, fs] = audioread('c:/test/lastFilter_Upward.wav');
+[x, fs] = audioread('D:/test/lastFilter_Upward.wav');
 
 % 타겟 시간 구간 설정 (0초에서 3초)
 start_time = 0;
@@ -48,10 +48,10 @@ for i = 1:num_steps
 end
 
 % 결과 음성 파일로 저장
-output_file = 'c:/test/testing/Extracted_Frequency_Signal_1000to2000.wav';
+output_file = 'D:/test/testing/Extracted_Frequency_Signal_1000to2000.wav';
 audiowrite(output_file, new_signal, fs);
 % 음성 파일 읽기
-[x, fs] = audioread('c:/test/testing/Extracted_Frequency_Signal_1000to2000.wav');
+[x, fs] = audioread('D:/test/testing/Extracted_Frequency_Signal_1000to2000.wav');
 
 % STFT를 사용하여 시간에 따른 주파수 성분 분석
 window_size = 1024;
@@ -69,26 +69,7 @@ S(:, start_index:end_index) = 0;
 figure;
 imagesc(t, f, 10*log10(abs(S))); % dB 단위로 변환하여 이미지로 표시
 axis xy;
-title('Spectrogram with 0-1 sec zeroed');
+title('LPF(1kHz to 2kHz) Spectrogram');
 xlabel('Time [sec]');
 ylabel('Frequency [Hz]');
 colorbar;
-
-% Filtered Signal의 전체 전력 계산 (1초부터 3초까지)
-start_time_filtered = 1;
-end_time_filtered = 3;
-start_index_filtered = floor(start_time_filtered * fs) + 1;
-end_index_filtered = floor(end_time_filtered * fs);
-filtered_signal_power = sum(abs(x(start_index_filtered:end_index_filtered)).^2) / length(x(start_index_filtered:end_index_filtered));
-
-% Filtered Signal의 잡음 전력 계산 (0초부터 1초까지)
-start_time_filtered_part = 0;
-end_time_filtered_part = 1;
-start_index_filtered_part = floor(start_time_filtered_part * fs) + 1;
-end_index_filtered_part = floor(end_time_filtered_part * fs);
-filtered_noise_power_part = sum(abs(x(start_index_filtered_part:end_index_filtered_part)).^2) / length(x(start_index_filtered_part:end_index_filtered_part));
-
-% Filtered Signal의 SNR 계산
-filtered_snr_db_part = 10 * abs(log10((filtered_signal_power - filtered_noise_power_part) / filtered_noise_power_part));
-fprintf('Filtered Signal-to-Noise Ratio (0-1s): %.2f dB\n', filtered_snr_db_part);
-
