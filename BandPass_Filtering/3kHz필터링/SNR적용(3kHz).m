@@ -33,7 +33,7 @@ ylabel('세기');
 
 % BandPass FIR 필터 적용
 
-passband1 = [2950 3050]/(fs/2); % 2950~3050Hz 주파수 범위 정의
+passband1 = [2800 3200]/(fs/2); % 2950~3050Hz 주파수 범위 정의
 filter_order = 1000; % 필터 차수 설정
 bandpass_filter = fir1(filter_order, passband1, 'bandpass');
 % Original Signal에 BandPass FIR 필터 적용
