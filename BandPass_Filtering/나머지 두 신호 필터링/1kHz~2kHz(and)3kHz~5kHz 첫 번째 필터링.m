@@ -10,7 +10,7 @@ clc; clear;
 pkg load signal;
 
 % WAV 파일 읽기
-[x, fs] = audioread('C:\test/Received_Signal.wav');
+[x, fs] = audioread('D:\test/Received_Signal.wav');
 
 % Set the first second of the signal to zeros
 x(1:fs) = 0;
@@ -20,13 +20,17 @@ X = fft(x);
 N = length(X);
 frequencies = (0:N-1)*(fs/N); % 주파수 계산
 
-lowcut_upward = 930;
-highcut_upward = 2070;
+
+% BandPass Filter 사용
+
+% 3초 구간에서 가장 큰 스펙트럼 값 2000, 1초 구간에서 가장 큰 스펙트럼 값 1000 ==> 오차범위 설정 +-50
+lowcut_upward = 950;
+highcut_upward = 2050;
 filter_range_upward = (frequencies > lowcut_upward & frequencies < highcut_upward) | ...
                       (frequencies > (fs - highcut_upward) & frequencies < (fs - lowcut_upward));
-
-lowcut_downward = 3420;
-highcut_downward = 5000;
+% 3초 구간에서 가장 큰 스펙트럼 값 3420, 1초 구간에서 가장 큰 스펙트럼 값 5000 ==> 오차범위 설정 +-50
+lowcut_downward = 3370;
+highcut_downward = 5050;
 filter_range_downward = (frequencies > lowcut_downward & frequencies < highcut_downward) | ...
                         (frequencies > (fs - highcut_downward) & frequencies < (fs - lowcut_downward));
 
@@ -72,7 +76,7 @@ ylabel('Frequency [Hz]');
 colorbar;
 
 % 필터링된 신호를 WAV 파일로 저장
-audiowrite('C:/test/lastFilter_Upward.wav', real(filtered_signal_upward), fs);
-audiowrite('C:/test/lastFilter_Downward.wav', real(filtered_signal_downward), fs);
+audiowrite('D:/test/lastFilter_Upward.wav', real(filtered_signal_upward), fs);
+audiowrite('D:/test/lastFilter_Downward.wav', real(filtered_signal_downward), fs);
 
 

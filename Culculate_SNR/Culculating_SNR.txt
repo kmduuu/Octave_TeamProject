@@ -1,0 +1,3 @@
+1. 원본 신호의 SNR(Signal-to-Noise Ratio) 값을 계산합니다.
+2. 3kHz, 1kHz to 2kHz, 5kHz to 3kHz 주파수 대역을 BandPass 필터링하여 필터링된 신호의 SNR 값을 계산합니다.
+3. Original-signal값과 위 값을 검산하는 과정을 거칩니다.

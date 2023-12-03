@@ -1,5 +1,6 @@
 clc; clear;
 pkg load signal;
+
 % 시간 범위 설정
 fs = 20000; % 샘플링 주파수
 t = 0:1/fs:3; % 3초 동안의 시간 범위
@@ -7,7 +8,7 @@ t = 0:1/fs:3; % 3초 동안의 시간 범위
 % 주파수 성분 생성
 value_Bpf = cos(6000 * pi * t);
 value_Lpf = cos(2000 * pi * t + 500 * pi * t.^2);
-value_Hpf = cos(10000 * pi * t - 790 * pi * t.^2);
+value_Hpf = cos(10000 * pi * t - 395 * pi * t.^2);
 
 % 0초에서 1초까지의 부분을 서서히 감소시켜 0으로 만듦
 fade_out_start = find(t >= 0, 1);
@@ -30,4 +31,5 @@ title('Combined Signal Spectrogram');
 xlabel('Time [sec]');
 ylabel('Frequency [Hz]');
 colorbar;
+
 
